@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NovaBank - Digital Banking</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 25px;
+            background: linear-gradient(-45deg,
+            #071426, #103b63, #075b82, #071426);
+            background-size: 400% 400%;
+            animation: gradientMove 12s ease infinite;
+            overflow-x: hidden;
+        }
+
+        /* BACKGROUND ANIMATION */
+
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .circle {
+            position: fixed;
+            border-radius: 50%;
+            background: rgba(35, 190, 240, .12);
+            filter: blur(2px);
+            animation: float 8s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        .circle.one {
+            width: 230px;
+            height: 230px;
+            top: 5%;
+            left: 5%;
+        }
+
+        .circle.two {
+            width: 160px;
+            height: 160px;
+            bottom: 5%;
+            right: 8%;
+            animation-delay: 2s;
+        }
+
+        .circle.three {
+            width: 90px;
+            height: 90px;
+            top: 65%;
+            left: 15%;
+            animation-delay: 4s;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) rotate(0);
+            }
+            50% {
+                transform: translateY(-35px) rotate(20deg);
+            }
+        }
+
+        /* MAIN CONTAINER */
+
+        .main {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            max-width: 1050px;
+            min-height: 650px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            background: white;
+            border-radius: 22px;
+            overflow: hidden;
+            box-shadow: 0 25px 80px #0006;
+            animation: pageEnter 1s ease;
+        }
+
+        @keyframes pageEnter {
+            from {
+                opacity: 0;
+                transform: translateY(40px) scale(.96);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* LEFT PANEL */
+
+        .brand-panel {
+            padding: 50px 40px;
+            background: linear-gradient(145deg,#092447,#087eae);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .logo {
+            font-size: 27px;
+            font-weight: 800;
+            animation: fadeDown 1s ease;
+        }
+
+        .logo span {
+            color: #42dcff;
+        }
+
+        .brand-content h1 {
+            font-size: 40px;
+            line-height: 1.2;
+            margin-bottom: 20px;
+            animation: fadeUp 1s ease .2s both;
+        }
+
+        .brand-content p {
+            color: #d0e6f5;
+            line-height: 1.8;
+            animation: fadeUp 1s ease .4s both;
+        }
+
+        @keyframes fadeDown {
+            from {
+                opacity: 0;
+                transform: translateY(-25px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(25px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* BANK CARD */
+
+        .bank-card {
+            max-width: 320px;
+            padding: 25px;
+            border-radius: 17px;
+            background: linear-gradient(120deg,#1267a0,#18b4cf);
+            box-shadow: 0 15px 35px #0004;
+            animation: cardFloat 4s ease-in-out infinite;
+        }
+
+        @keyframes cardFloat {
+            0%, 100% {
+                transform: translateY(0) rotate(-3deg);
+            }
+            50% {
+                transform: translateY(-15px) rotate(2deg);
+            }
+        }
+
+        .card-top {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 35px;
+        }
+
+        .chip {
+            width: 40px;
+            height: 28px;
+            background: #dbe5a5;
+            border-radius: 6px;
+        }
+
+        .card-number {
+            font-size: 19px;
+            letter-spacing: 3px;
+            margin: 20px 0;
+        }
+
+        .card-bottom {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+        }
+
+        /* RIGHT PANEL */
+
+        .form-panel {
+            padding: 40px 45px;
+            color: #172c46;
+            overflow: hidden;
+        }
+
+        .secure {
+            text-align: right;
+            font-size: 12px;
+            color: #8794a4;
+            margin-bottom: 25px;
+        }
+
+        /* TABS */
+
+        .tabs {
+            position: relative;
+            display: flex;
+            background: #eef3f8;
+            border-radius: 10px;
+            padding: 5px;
+            margin-bottom: 28px;
+        }
+
+        .tabs button {
+            position: relative;
+            z-index: 2;
+            width: 50%;
+            padding: 12px;
+            border: none;
+            background: transparent;
+            color: #65758a;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+        .tabs button.active {
+            color: white;
+            font-weight: bold;
+        }
+
+        .tab-indicator {
+            position: absolute;
+            width: calc(50% - 5px);
+            height: calc(100% - 10px);
+            top: 5px;
+            left: 5px;
+            background: linear-gradient(100deg,#087bb5,#16b4d2);
+            border-radius: 7px;
+            transition: transform .45s cubic-bezier(.68,-.2,.27,1.3);
+        }
+
+        .tab-indicator.register {
+            transform: translateX(100%);
+        }
+
+        /* FORM ANIMATION */
+
+        .form-area {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr);
+        }
+
+        .form-box {
+            grid-area: 1 / 1;
+            min-width: 0;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transform: translateX(60px);
+            transition:
+                    opacity .45s ease,
+                    transform .55s ease,
+                    visibility .45s;
+        }
+
+        .form-box.active {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+            transform: translateX(0);
+            z-index: 1;
+        }
+
+        .form-box h2 {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: #8995a4;
+            font-size: 13px;
+            margin-bottom: 24px;
+        }
+
+        .group {
+            margin-bottom: 15px;
+        }
+
+        .group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 7px;
+        }
+
+        .group input,
+        .group select,
+        .group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #dce3eb;
+            background: #f9fbfd;
+            border-radius: 8px;
+            outline: none;
+            font-size: 13px;
+            transition: .3s;
+        }
+
+        .group input:focus,
+        .group select:focus,
+        .group textarea:focus {
+            border-color: #087bb5;
+            box-shadow: 0 0 0 4px #087bb51a;
+            background: white;
+        }
+
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        /* PASSWORD */
+
+        .password-wrap {
+            position: relative;
+        }
+
+        .password-wrap input {
+            padding-right: 55px;
+        }
+
+        .eye {
+            position: absolute;
+            right: 12px;
+            top: 12px;
+            border: none;
+            background: none;
+            color: #087bb5;
+            cursor: pointer;
+        }
+
+        /* BUTTON */
+
+        .submit {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(100deg,#087bb5,#16b4d2);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: .3s;
+        }
+
+        .submit:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px #087bb544;
+        }
+
+        .submit:active {
+            transform: scale(.97);
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 22px;
+            color: #8995a4;
+            font-size: 12px;
+        }
+
+        .footer a {
+            color: #087bb5;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .strength {
+            height: 5px;
+            margin-top: 7px;
+            background: #e6eaf0;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .strength div {
+            width: 0;
+            height: 100%;
+            transition: .3s;
+            background: #20a66b;
+        }
+
+        .terms {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            margin: 12px 0;
+        }
+
+        .terms input {
+            width: auto;
+        }
+
+        @media(max-width: 800px) {
+            .main {
+                grid-template-columns: 1fr;
+                max-width: 520px;
+            }
+
+            .brand-panel {
+                min-height: 260px;
+                padding: 30px;
+            }
+
+            .brand-content {
+                margin: 25px 0;
+            }
+
+            .brand-content h1 {
+                font-size: 30px;
+            }
+
+            .bank-card {
+                display: none;
+            }
+
+            .form-panel {
+                padding: 30px 25px;
+            }
+        }
+
+        @media(max-width: 450px) {
+            body {
+                padding: 10px;
+            }
+
+            .form-panel {
+                padding: 25px 18px;
+            }
+
+            .row {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
+        }
+        /* Outer container */
+        .login-error {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            margin-top: 10px;
+            background: #fff1f2;
+            border-left: 3px solid #dc2626;
+            border-radius: 8px;
+            color: #dc2626;
+        }
+
+        .error-icon {
+            background: #ffe1e1;
+            width: 35px;
+            height: 35px;
+            min-width: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+
+        .login-error strong {
+            font-size: 13px;
+        }
+
+        .login-error small {
+            display: block;
+            font-size: 11px;
+            color: #b91c1c;
+            margin-top: 3px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="circle one"></div>
+<div class="circle two"></div>
+<div class="circle three"></div>
+
+<div class="main">
+
+    <!-- BRAND PANEL -->
+
+    <section class="brand-panel">
+
+        <div class="logo">KRISHNA<span>BANK</span></div>
+
+        <div class="brand-content">
+            <h1>Banking that moves with you.</h1>
+
+            <p>
+                Your money. Your control. Your future.
+                Experience smarter, faster and safer
+                digital banking.
+            </p>
+        </div>
+
+        <div class="bank-card">
+            <div class="card-top">
+                <strong>KRISHNABANK</strong>
+                <span>◉</span>
+            </div>
+
+            <div class="chip"></div>
+
+            <div class="card-number">
+                •••• &nbsp; •••• &nbsp; •••• &nbsp; 2026
+            </div>
+
+            <div class="card-bottom">
+                <span>PREMIUM CUSTOMER</span>
+                <strong>VISA</strong>
+            </div>
+        </div>
+
+    </section>
+
+
+    <!-- FORM PANEL -->
+
+    <section class="form-panel">
+
+        <div class="secure">🔒 Secure Digital Banking</div>
+
+        <!-- TABS -->
+
+        <div class="tabs">
+
+            <div class="tab-indicator" id="indicator"></div>
+
+            <button id="loginTab"
+                    class="active"
+                    onclick="showLogin()">
+                Login
+            </button>
+
+            <button id="registerTab"
+                    onclick="showRegister()">
+                Register
+            </button>
+
+        </div>
+
+
+        <div class="form-area">
+
+            <!-- LOGIN FORM -->
+
+            <div class="form-box active" id="loginForm">
+
+                <h2>Welcome Back!</h2>
+
+                <p class="subtitle">
+                    Access your secure banking account.
+                </p>
+
+                <form action="/login" method="get">
+
+                    <div class="group">
+                        <label>Email Address</label>
+                        <input type="email"
+                               id="loginEmail" name="email"
+                               placeholder="Enter your email"
+                               required>
+                    </div>
+
+                    <div class="group">
+                        <label>Password</label>
+
+                        <div class="password-wrap">
+                            <input type="password"
+                                   id="loginPassword" name="password"
+                                   placeholder="Enter password"
+                                   required>
+
+                            <button type="button"
+                                    class="eye"
+                                    onclick="togglePassword('loginPassword',this)">
+                                Show
+                            </button>
+                        </div>
+                    </div>
+                    <div th:if="${session.error}" class="login-error">
+                        <span class="error-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24">
+                                <circle cx="12" cy="12" r="9" fill="none" stroke="red" stroke-width="2"/>
+                                <path d="M12 7v6" stroke="red" stroke-width="2" stroke-linecap="round"/>
+                                <circle cx="12" cy="16" r="1" fill="red"/>
+                            </svg>
+                        </span>
+                        <div>
+                            <strong th:text="${session.error}"></strong>
+                            <small>Please check your login credentials.</small>
+                        </div>
+                    </div>
+                    <button type="button"
+                            onclick="forgotPassword()"
+                            style="display:block;margin-left:auto;
+                            margin-bottom:20px;background:none;
+                            border:none;color:#087bb5;cursor:pointer;">
+                        Forgot Password?
+                    </button>
+                    <button type="submit" class="submit">
+                        Login Securely →
+                    </button>
+
+                </form>
+
+                <div class="footer">
+                    New customer?
+                    <a onclick="showRegister()">Create Account</a>
+                </div>
+
+            </div>
+
+
+            <!-- REGISTER FORM -->
+
+            <div class="form-box" id="registerForm">
+
+                <h2>Open Your Account</h2>
+
+                <p class="subtitle">
+                    Join us and experience smarter banking.
+                </p>
+
+
+                <form  action="/register" method="get">
+
+                    <div class="group">
+                        <label>Full Name</label>
+                        <input type="text"
+                               id="fullName"
+                               placeholder="Enter full name"
+                               minlength="3"
+                               required name="name">
+                    </div>
+
+                    <div class="row">
+
+                        <div class="group">
+                            <label>Date of Birth</label>
+                            <input type="date"
+                                   id="dob" name="dob"
+                                   required>
+                        </div>
+
+                        <div class="group">
+                            <label>Gender</label>
+                            <select id="gender" name="gender" required>
+                                <option value="">Select</option>
+                                <option>Male</option>
+                                <option>Female</option>
+                                <option>Other</option>
+                            </select>
+                        </div>
+
+                    </div>
+
+                    <div class="group">
+                        <label>Email Address</label>
+                        <input type="email"
+                               id="registerEmail"
+                               name="email"
+                               placeholder="Enter email"
+                               required>
+                    </div>
+
+                    <div class="group">
+                        <label>Mobile Number</label>
+                        <input type="tel"
+                               id="mobile"
+                               name="phno"
+                               placeholder="10 digit mobile number"
+                               pattern="[6-9][0-9]{9}"
+                               maxlength="10"
+                               required>
+                    </div>
+
+                    <div class="group">
+                        <label>Account Type</label>
+                        <select id="accountType" name="accountType" required>
+                            <option value="">Select Account Type</option>
+                            <option value="Savings">Savings Account</option>
+                            <option value="Current">Current Account</option>
+                        </select>
+                    </div>
+
+                    <div class="group">
+                        <label>Create Password</label>
+                        <div class="password-wrap">
+                            <input type="password"
+                                   id="registerPassword"
+                                   name="password"
+                                   minlength="8"
+                                   placeholder="Create password"
+                                   oninput="checkStrength()"
+                                   required>
+
+                            <button type="button"
+                                    class="eye"
+                                    onclick="togglePassword('registerPassword',this)">
+                                Show
+                            </button>
+                        </div>
+
+
+                    </div>
+
+                    <label class="terms">
+                        <input type="checkbox" required>
+                        I agree to the terms and conditions.
+                    </label>
+
+                    <button type="submit" class="submit">
+                        Create Account →
+                    </button>
+
+                </form>
+
+                <div class="footer">
+                    Already registered?
+                    <a onclick="showLogin()">Login Here</a>
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</div>
+
+
+<script>
+
+    // LOGIN ANIMATION
+
+    function showLogin() {
+
+        document.getElementById("loginForm")
+            .classList.add("active");
+
+        document.getElementById("registerForm")
+            .classList.remove("active");
+
+        document.getElementById("loginTab")
+            .classList.add("active");
+
+        document.getElementById("registerTab")
+            .classList.remove("active");
+
+        document.getElementById("indicator")
+            .classList.remove("register");
+    }
+
+
+    // REGISTER ANIMATION
+
+    function showRegister() {
+
+        document.getElementById("registerForm")
+            .classList.add("active");
+
+        document.getElementById("loginForm")
+            .classList.remove("active");
+
+        document.getElementById("registerTab")
+            .classList.add("active");
+
+        document.getElementById("loginTab")
+            .classList.remove("active");
+
+        document.getElementById("indicator")
+            .classList.add("register");
+    }
+
+
+    // PASSWORD SHOW/HIDE
+
+    function togglePassword(id, button) {
+
+        const input = document.getElementById(id);
+
+        if(input.type === "password") {
+            input.type = "text";
+            button.innerText = "Hide";
+        } else {
+            input.type = "password";
+            button.innerText = "Show";
+        }
+    }
+
+
+    // PASSWORD STRENGTH
+
+    function checkStrength() {
+
+        const password =
+            document.getElementById("registerPassword").value;
+
+        const bar = document.getElementById("strengthBar");
+
+        let score = 0;
+
+        if(password.length >= 8) score++;
+        if(/[A-Z]/.test(password)) score++;
+        if(/[0-9]/.test(password)) score++;
+        if(/[^A-Za-z0-9]/.test(password)) score++;
+
+        const widths = ["0%","25%","50%","75%","100%"];
+
+        bar.style.width = widths[score];
+
+        const colors = [
+            "#ddd", "#e74c3c", "#f39c12", "#3498db", "#20a66b"
+        ];
+
+        bar.style.background = colors[score];
+    }
+
+
+    // LOGIN
+
+    function login(event) {
+
+        event.preventDefault();
+
+        alert("Login form submitted. Connect your Spring Boot backend for authentication.");
+
+    }
+
+
+    // REGISTRATION
+
+    function register(event) {
+
+        event.preventDefault();
+
+        const password =
+            document.getElementById("registerPassword").value;
+
+        const confirm =
+            document.getElementById("confirmPassword").value;
+
+        const dob =
+            document.getElementById("dob").value;
+
+        if(password !== confirm) {
+            alert("Passwords do not match!");
+            return;
+        }
+
+        if(new Date(dob) >= new Date()) {
+            alert("Please select a valid date of birth.");
+            return;
+        }
+
+        alert("Registration submitted successfully!");
+
+        showLogin();
+
+    }
+
+
+    // FORGOT PASSWORD
+
+    function forgotPassword() {
+
+        const email =
+            document.getElementById("loginEmail").value;
+
+        if(!email) {
+            alert("Please enter your email address first.");
+            return;
+        }
+
+        alert("Password reset service needs backend integration.");
+
+    }
+
+</script>
+
+</body>
+</html>

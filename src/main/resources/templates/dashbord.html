@@ -1,0 +1,841 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>NovaBank - Dashboard</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+  <style>
+
+      * {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+          font-family: Arial, sans-serif;
+      }
+
+      body {
+          background: #f3f6fb;
+          color: #243247;
+      }
+
+      .layout {
+          display: flex;
+          min-height: 100vh;
+      }
+
+      .sidebar {
+          width: 250px;
+          background: #10243e;
+          color: white;
+          padding: 25px 15px;
+          flex-shrink: 0;
+      }
+
+      .logo {
+          font-size: 27px;
+          font-weight: bold;
+          margin-bottom: 45px;
+          padding-left: 15px;
+      }
+
+      .logo span {
+          color: #29d6a0;
+      }
+
+      .menu-title {
+          color: #8297af;
+          font-size: 12px;
+          padding: 10px 15px;
+          margin-bottom: 10px;
+      }
+
+      .menu a {
+          display: block;
+          color: #c5d2e1;
+          text-decoration: none;
+          padding: 14px 15px;
+          border-radius: 8px;
+          margin-bottom: 7px;
+          cursor: pointer;
+      }
+
+      .menu a:hover,
+      .menu a.active {
+          background: #1d3b5e;
+          color: white;
+      }
+
+      .menu .logout {
+          margin-top: 50px;
+          color: #ff8585;
+      }
+
+      .main {
+          flex: 1;
+          padding: 30px;
+          min-width: 0;
+      }
+
+      .topbar {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 35px;
+      }
+
+      .topbar h2 {
+          font-size: 26px;
+          font-weight: bold;
+      }
+
+      .topbar p {
+          color: #8592a4;
+          margin-top: 5px;
+      }
+
+      .profile {
+          display: flex;
+          align-items: center;
+          gap: 15px;
+      }
+
+      .avatar {
+          width: 45px;
+          height: 45px;
+          border-radius: 50%;
+          background: #1769aa;
+          color: white;
+          display: grid;
+          place-items: center;
+          font-weight: bold;
+      }
+
+      .cards {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 20px;
+      }
+
+      .card {
+          background: white;
+          padding: 25px;
+          border: none;
+          border-radius: 13px;
+          box-shadow: 0 4px 15px #00000008;
+      }
+
+      .card h4 {
+          font-size: 15px;
+          color: #8492a6;
+          margin-bottom: 15px;
+      }
+
+      .card h2 {
+          font-size: 25px;
+          font-weight: bold;
+      }
+
+      .card small {
+          color: #8996a7;
+      }
+
+      .balance-card {
+          background: linear-gradient(120deg, #124d83, #087b91);
+          color: white;
+      }
+
+      .balance-card h4,
+      .balance-card small {
+          color: #d2e8f5;
+      }
+
+      .balance-card button {
+          background: transparent;
+          border: none;
+          color: white;
+          cursor: pointer;
+      }
+
+      .section-title {
+          font-size: 20px;
+          font-weight: bold;
+          margin: 35px 0 20px;
+      }
+
+      .actions {
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+          gap: 20px;
+      }
+
+      .action {
+          background: white;
+          padding: 25px;
+          text-align: center;
+          border-radius: 12px;
+          cursor: pointer;
+          box-shadow: 0 4px 15px #00000008;
+          transition: .3s;
+      }
+
+      .action:hover {
+          transform: translateY(-5px);
+      }
+
+      .symbol {
+          font-size: 30px;
+          margin-bottom: 12px;
+      }
+
+      .transaction-box {
+          background: white;
+          border-radius: 12px;
+          padding: 20px;
+          overflow-x: auto;
+      }
+
+      table {
+          width: 100%;
+          border-collapse: collapse;
+          min-width: 550px;
+      }
+
+      th, td {
+          padding: 16px;
+          text-align: left;
+          border-bottom: 1px solid #edf0f4;
+      }
+
+      th {
+          color: #8190a4;
+          font-size: 13px;
+      }
+
+      td {
+          font-size: 14px;
+      }
+
+      .credit, .SUCCESSFUL {
+          color: #16a36b;
+          font-weight: bold;
+      }
+
+      .debit,.FAILED {
+          color: #e34e55;
+          font-weight: bold;
+      }
+
+      .page-section {
+          display: none;
+      }
+
+      .page-section.active {
+          display: block;
+      }
+
+      .modal{
+          display: none;
+          position: fixed;
+          inset: 0;
+          background: #0008;
+          align-items: center;
+          justify-content: center;
+          z-index: 1000;
+      }
+
+      .modal-box {
+          background: white;
+          padding: 30px;
+          width: 400px;
+          max-width: 92%;
+          border-radius: 15px;
+          position: relative;
+      }
+
+      .modal-box input {
+          width: 100%;
+          padding: 13px;
+          margin: 15px 0;
+          border: 1px solid #ddd;
+          border-radius: 7px;
+      }
+
+      .close {
+          position: absolute;
+          right: 20px;
+          top: 15px;
+          cursor: pointer;
+      }
+
+      .btn {
+          width: 100%;
+          padding: 12px;
+          background: #087b91;
+          color: white;
+          border: none;
+          border-radius: 7px;
+      }
+
+      @media(max-width: 900px) {
+          .sidebar {
+              width: 200px;
+          }
+
+          .cards {
+              grid-template-columns: 1fr 1fr;
+          }
+
+          .actions {
+              grid-template-columns: 1fr 1fr;
+          }
+      }
+
+      @media(max-width: 600px) {
+          .layout {
+              display: block;
+          }
+
+          .sidebar {
+              width: 100%;
+          }
+
+          .menu {
+              display: flex;
+              flex-wrap: wrap;
+          }
+
+          .menu a {
+              font-size: 12px;
+              padding: 10px;
+          }
+
+          .main {
+              padding: 15px;
+          }
+
+          .cards {
+              grid-template-columns: 1fr;
+          }
+
+          .actions {
+              grid-template-columns: 1fr 1fr;
+          }
+
+          .topbar h2 {
+              font-size: 19px;
+          }
+      }
+
+  </style>
+
+<body>
+
+<div class="layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="logo">KRISHNA<span>BANK</span></div>
+
+        <div class="menu-title">MAIN MENU</div>
+
+        <nav class="menu">
+
+            <a class="active" onclick="showPage('dashboard', this)">
+                ⌂ Dashboard
+            </a>
+
+            <a onclick="showPage('accounts', this)">
+                ▣ My Account
+            </a>
+
+            <a onclick="openModal('deposit')">＋ Deposit</a>
+
+            <a onclick="openModal('withdraw')">− Withdraw</a>
+
+            <a onclick="openModal('transfer')">⇄ Transfer</a>
+
+            <a onclick="showPage('transactions', this)">
+                ▤ Transactions
+            </a>
+
+            <a onclick="showPage('profile', this)">
+                ♙ My Profile
+            </a>
+
+            <a class="logout" onclick="logout()">↪ Logout</a>
+
+        </nav>
+    </aside>
+
+
+    <!-- MAIN CONTENT -->
+    <main class="main">
+
+        <!-- TOPBAR -->
+        <div class="topbar">
+
+            <div>
+                <h2 id="pageTitle">Dashboard Overview</h2>
+                <p>Welcome back to NovaBank!</p>
+            </div>
+
+            <div class="profile">
+
+                <div>
+                    <strong th:text="${session.customer.name}">
+                        Customer Name
+                    </strong>
+
+                    <p style="color:#b9cce0;font-size:12px">
+                        Premium Customer
+                    </p>
+                </div>
+
+                <div class="avatar"
+                     th:text="${#strings.isEmpty(session.customer.name) ? 'C' : #strings.substring(session.customer.name,0,1)}">
+                    C
+                </div>
+
+            </div>
+
+        </div>
+        <!-- DASHBOARD SECTION -->
+        <section id="dashboard" class="page-section active">
+
+            <div class="cards">
+
+                <!-- BALANCE -->
+                <div class="card balance-card">
+
+                    <h4>Total Account Balance</h4>
+
+                    <h2>
+                        <span id="balance"
+                              th:text="${session.customer.balance}">
+                            ₹0.00
+                        </span>
+
+                        <button type="button"
+                                id="toggleBalance"
+                                onclick="toggleBalance()">◉</button>
+                    </h2>
+
+                    <small>● Account Active</small>
+
+                </div>
+
+
+                <!-- DEPOSITS -->
+                <div class="card">
+
+                    <h4>Total Deposits</h4>
+
+                    <h2 th:text="${'₹' + (session.depositTotal == null ? 0 : session.depositTotal)}">
+                        ₹0.00
+                    </h2>
+
+                    <small>Money received</small>
+
+                </div>
+
+
+                <!-- WITHDRAWALS -->
+                <div class="card">
+
+                    <h4>Total Withdrawals</h4>
+
+                    <h2 th:text="${'₹' + (session.withdrawTotal == null ? 0 : session.withdrawTotal)}">
+                        ₹0.00
+                    </h2>
+
+                    <small>Money spent</small>
+
+                </div>
+
+            </div>
+
+            <!-- QUICK SERVICES -->
+            <h3 class="section-title">Quick Banking Services</h3>
+
+            <div class="actions">
+
+                <div class="action" onclick="openModal('deposit')">
+                    <div class="symbol">💰</div>
+                    <strong>Deposit</strong>
+                </div>
+
+                <div class="action" onclick="openModal('withdraw')">
+                    <div class="symbol">💸</div>
+                    <strong>Withdraw</strong>
+                </div>
+
+                <div class="action" onclick="openModal('transfer')">
+                    <div class="symbol">⇄</div>
+                    <strong>Transfer</strong>
+                </div>
+
+                <div class="action" onclick="showPage('transactions')">
+                    <div class="symbol">📄</div>
+                    <strong>Statement</strong>
+                </div>
+
+            </div>
+
+
+            <!-- RECENT TRANSACTIONS -->
+            <h3 class="section-title">Recent Transactions</h3>
+
+            <div class="transaction-box">
+
+                <table>
+
+                    <thead>
+                    <tr>
+                        <th>TransactionID</th>
+                        <th>Date</th>
+                        <th>Type</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+
+                    <tr th:each="recentTransaction : ${session.recentTransactions}">
+
+                        <td th:text="${recentTransaction.id}">
+                            ID
+                        </td>
+
+                        <td th:text="${recentTransaction.transactionDate == null ? '-' : recentTransaction.transactionDate}">
+                            Date
+                        </td>
+
+                        <td th:text="${recentTransaction.type}"
+                            th:class="${recentTransaction.type == 'CREDIT'} ? 'credit' : 'debit'">
+                            Type
+                        </td>
+
+                        <td th:class="${recentTransaction.type == 'CREDIT'} ? 'credit' : 'debit'">
+
+                            <span th:text="${recentTransaction.type == 'CREDIT' ? '+' : '-'}">
+                                +
+                            </span>
+
+                            ₹<span th:text="${recentTransaction.amount == null ? '0.00' : recentTransaction.amount}">
+                                0.00
+                            </span>
+
+                        </td>
+                        <td th:text="${recentTransaction.status}"
+                            th:class="${recentTransaction.status == 'SUCCESSFUL'} ? 'SUCCESSFUL' : 'FAILED'">
+                        </td>
+
+                    </tr>
+
+                    <tr th:if="${#lists.isEmpty(session.recentTransactions)}">
+                        <td colspan="4" style="text-align:center">
+                            No transactions found.
+                        </td>
+                    </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+
+        <!-- ACCOUNT SECTION -->
+        <section id="accounts" class="page-section">
+
+            <div class="card">
+
+                <h3>My Bank Account</h3>
+
+                <br>
+
+                <p>
+                    Account Holder:
+                    <strong th:text="${session.customer.name}"></strong>
+                </p>
+
+                <p>
+                    Account Number:
+                    <strong th:text="${session.customer.accountNo}"></strong>
+                </p>
+
+                <p>
+                    Account Balance:
+                    <strong th:text="${'₹' + session.customer.balance}"></strong>
+                </p>
+
+                <p>
+                    Account Status:
+                    <span class="credit">Active</span>
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- ALL TRANSACTIONS -->
+        <section id="transactions" class="page-section">
+
+            <h3 class="section-title">All Transactions</h3>
+
+            <div class="transaction-box">
+
+                <table>
+
+                    <thead>
+                    <tr>
+                        <th>Transaction ID</th>
+                        <th>Date</th>
+                        <th>Type</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+
+                    <tr th:each="transaction : ${session.transactions}">
+
+                        <td th:text="${transaction.id}"></td>
+
+                        <td th:text="${transaction.transactionDate == null ? '-' : transaction.transactionDate}">
+                        </td>
+                        <td th:text="${transaction.type}"
+                            th:class="${transaction.type == 'CREDIT'} ? 'credit' : 'debit'">
+                        </td>
+
+                        <td th:class="${transaction.type == 'CREDIT'} ? 'credit' : 'debit'">
+
+                            <span th:text="${transaction.type == 'CREDIT' ? '+' : '-'}"></span>
+
+                            ₹<span th:text="${transaction.amount == null ? '0.00' : transaction.amount}"></span>
+
+                        </td>
+                        <td th:text="${transaction.status}"
+                            th:class="${transaction.status == 'SUCCESSFUL'} ? 'SUCCESSFUL' : 'FAILED'">
+                        </td>
+
+                    </tr>
+
+                    <tr th:if="${#lists.isEmpty(session.transactions)}">
+                        <td colspan="5" style="text-align:center">
+                            No transactions available.
+                        </td>
+                    </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+
+        <!-- PROFILE SECTION -->
+        <section id="profile" class="page-section">
+
+            <div class="card">
+
+                <h3>Customer Profile</h3>
+
+                <br>
+
+                <p>
+                    Full Name:
+                    <strong th:text="${session.customer.name}"></strong>
+                </p>
+
+                <p>
+                    Account Number:
+                    <strong th:text="${session.customer.accountNo}"></strong>
+                </p>
+                <p>
+                    Email:
+                    <strong th:text="${session.customer.email}"></strong>
+                </p>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<!-- BANKING MODAL -->
+<div class="modal" id="bankModal">
+
+    <div class="modal-box">
+
+        <span class="close" onclick="closeModal()">✕</span>
+        <h2 id="modalTitle">Deposit Money</h2>
+
+        <form action="/Trnsformoney" id="bankForm">
+
+            <input type="number"
+                   id="amount" name="amount"
+                   placeholder="Enter Amount (₹)"
+                   required>
+            <input type="text"
+                   id="receiver" name="accountnumber"
+                   placeholder="Receiver Account Number">
+            <button class="btn" type="submit">
+                Confirm
+            </button>
+
+        </form>
+    </div>
+</div>
+<div class="modal" id="bankModal1">
+    <div class="modal-box">
+        <span class="close" onclick="closeModal()">✕</span>
+        <h2 id="modalTitle1">Deposit Money</h2>
+        <form id="bankForm1" action="/deposit" method="get">
+            <input type="number"
+                   id="amount1" name="amount"
+                   placeholder="Enter Amount (₹)"
+                   min="1"
+                   step="0.01"
+                   required>
+            <button class="btn" type="submit">
+                Confirm
+            </button>
+        </form>
+    </div>
+</div>
+<div class="modal" id="bankModal2">
+    <div class="modal-box">
+        <span class="close" onclick="closeModal()">✕</span>
+        <h2 id="modalTitle2">Deposit Money</h2>
+        <form id="bankForm2" action="/withdraw" method="get">
+            <input type="number"
+                   id="amount2" name="amount"
+                   placeholder="Enter Amount (₹)"
+                   min="1"
+                   step="0.01"
+                   required>
+            <button class="btn" type="submit">
+                Confirm
+            </button>
+        </form>
+    </div>
+</div>
+
+
+
+<!-- JAVASCRIPT -->
+<script>
+    function showPage(page, element) {
+
+        document.querySelectorAll('.page-section')
+            .forEach(section => section.classList.remove('active'));
+
+        const selectedPage = document.getElementById(page);
+
+        if (selectedPage) {
+            selectedPage.classList.add('active');
+        }
+
+        document.querySelectorAll('.menu a')
+            .forEach(link => link.classList.remove('active'));
+
+        if (element) {
+            element.classList.add('active');
+        }
+
+        const titles = {
+            dashboard: 'Dashboard Overview',
+            accounts: 'My Account',
+            transactions: 'Transaction History',
+            profile: 'My Profile'
+        };
+
+        document.getElementById('pageTitle').innerText =
+            titles[page] || 'Dashboard';
+    }
+
+
+    function openModal(type) {
+
+        // Hide all modals first
+        closeModal();
+
+        if (type === 'transfer') {
+
+            document.getElementById('modalTitle').innerText =
+                'Transfer Money';
+
+            document.getElementById('receiver').style.display = 'block';
+            document.getElementById('receiver').required = true;
+
+            document.getElementById('bankModal').style.display = 'flex';
+
+        }
+
+        else if (type === 'deposit') {
+
+            document.getElementById('modalTitle1').innerText =
+                'Deposit Money';
+
+            document.getElementById('bankModal1').style.display = 'flex';
+
+        }
+
+        else if (type === 'withdraw') {
+
+            document.getElementById('modalTitle2').innerText =
+                'Withdraw Money';
+
+            document.getElementById('bankModal2').style.display = 'flex';
+
+        }
+    }
+
+
+    function closeModal() {
+        document.getElementById('bankModal').style.display = 'none';
+        document.getElementById('bankModal1').style.display = 'none';
+        document.getElementById('bankModal2').style.display = 'none';
+    }
+
+    function toggleBalance() {
+
+        const balance = document.getElementById('balance');
+
+        if (balance.dataset.hidden === 'true') {
+
+            balance.innerText = balance.dataset.original;
+            balance.dataset.hidden = 'false';
+
+        } else {
+
+            balance.dataset.original = balance.innerText;
+            balance.innerText = '₹ XXXX.XX';
+            balance.dataset.hidden = 'true';
+
+        }
+    }
+    function logout() {
+        window.location.href = '/logout';
+    }
+</script>
+
+</body>
+</html>
